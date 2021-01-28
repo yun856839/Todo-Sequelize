@@ -7,31 +7,45 @@ const bcrypt = require('bcryptjs')
 const app = express()
 const PORT = 3000
 
+const db = require('./models')
+const Todo = db.Todo
+const User = db.User
+
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+// 設定路由
+//首頁
 app.get('/', (req, res) => {
   res.send('hello world')
 })
 
+// 認證系統路由
+// 登入
 app.get('/users/login', (req, res) => {
   res.render('login')
 })
 
+// 登入檢查
 app.post('/users/login', (req, res) => {
   res.send('login')
 })
 
+// 註冊
 app.get('/users/register', (req, res) => {
   res.render('register')
 })
 
+// 註冊檢查
 app.post('/users/register', (req, res) => {
-  res.send('register')
+  const { name, email, password, confirmPassword } = req.body
+  User.create({ name, email, password })
+    .then(user => res.redirect('/'))
 })
 
+// 登出
 app.get('/users/logout', (req, res) => {
   res.send('logout')
 })
